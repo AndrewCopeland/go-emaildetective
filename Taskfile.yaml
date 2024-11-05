@@ -12,5 +12,10 @@ tasks:
           --additional-properties packageName=emaildetective \
           -g go \
           -o /local
+  push:
+    desc: push a new version
+    cmds:
+      - git tag -a $TAG -m "Version $TAG"
+      - git push origin --tags
 
 
