@@ -1,0 +1,424 @@
+openapi: 3.0.0
+info:
+  contact:
+    url: https://emaildetective.io/contact
+  description: |-
+    EmailDetective.io is an API focusing on validating email addresses and providing a score based off how suspicious an email address is.
+
+    To get started register a new user (make sure to verify your email) and then you can can start getting email information.
+  termsOfService: http://emaildetective.io/terms
+  title: api.emaildetective.io API
+  version: 1.0.0
+externalDocs:
+  description: Find out more about emaildetective.io
+  url: https://emaildetective.io
+servers:
+- url: https://api.emaildetective.io
+tags:
+- description: Email information endpoints
+  name: email info
+paths:
+  /emails/{emailAddress}:
+    get:
+      description: |-
+        Get information about an email address.
+
+        - `email`: The email address being validated. Example: `"user123@example.com"`.
+        - `user`: The user portion of the email address, which is everything before the "@" symbol. Example: `"user123"`.
+        - `domain`: The domain portion of the email address, which is everything after the "@" symbol. Example: `"example.com"`.
+        - `valid_email`: Indicates whether the email address format is valid. Example: `true`.
+        - `valid_spf`: Indicates whether the email domain has a valid SPF (Sender Policy Framework) record. Example: `true`.
+        - `valid_dmarc`: Indicates whether the email domain has a valid DMARC (Domain-based Message Authentication, Reporting & Conformance) record. Example: `true`.
+        - `valid_mx`: Indicates whether the email domain has valid MX (Mail Exchange) records. Example: `true`.
+        - `valid_tld`: If the TLD (Top Level Domain) specified in the email is valid. A TLD is .com, .org, .net, etc
+        - `nonsense`: Flags whether the email is nonsensical or randomly generated. Example: `false`.
+        - `role`: Indicates whether the email address is associated with a role (e.g., `admin@example.com`). Example: `false`.
+        - `free`: Indicates whether the email is from a free email provider (e.g., Gmail, Yahoo). Example: `true`.
+        - `disposable`: Indicates whether the email address is from a disposable email service. Example: `false`.
+        - `score`: The total score of the email address. The lower the score the more likely the email address is suspicious or not valid. This is is an integer between 0 and 100. An example of a suspicous score would be 35, an example of a non-suspicous score would be 85.
+        - `suspicion_rating`: The rating of the email address. Valid value are HIGH, MEDIUM, LOW.
+      operationId: getEmailAddressInfo
+      parameters:
+      - description: email address
+        explode: false
+        in: path
+        name: emailAddress
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailInfoResponse'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400ErrorResponse'
+          description: Invalid input
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorResponse'
+          description: Invalid input
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/429ErrorResponse'
+          description: Invalid input
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500ErrorResponse'
+          description: Invalid input
+      security:
+      - api_key: []
+      summary: Get information and legitimacy score for an email address
+      tags:
+      - email info
+      x-roles:
+      - user
+      - admin
+  /emails:
+    post:
+      description: |-
+        Get information about many email address.
+
+        - `email`: The email address being validated. Example: `"user123@example.com"`.
+        - `user`: The user portion of the email address, which is everything before the "@" symbol. Example: `"user123"`.
+        - `domain`: The domain portion of the email address, which is everything after the "@" symbol. Example: `"example.com"`.
+        - `valid_email`: Indicates whether the email address format is valid. Example: `true`.
+        - `valid_spf`: Indicates whether the email domain has a valid SPF (Sender Policy Framework) record. Example: `true`.
+        - `valid_dmarc`: Indicates whether the email domain has a valid DMARC (Domain-based Message Authentication, Reporting & Conformance) record. Example: `true`.
+        - `valid_mx`: Indicates whether the email domain has valid MX (Mail Exchange) records. Example: `true`.
+        - `valid_tld`: If the TLD (Top Level Domain) specified in the email is valid. A TLD is .com, .org, .net, etc
+        - `nonsense`: Flags whether the email is nonsensical or randomly generated. Example: `false`.
+        - `role`: Indicates whether the email address is associated with a role (e.g., `admin@example.com`). Example: `false`.
+        - `free`: Indicates whether the email is from a free email provider (e.g., Gmail, Yahoo). Example: `true`.
+        - `disposable`: Indicates whether the email address is from a disposable email service. Example: `false`.
+        - `score`: The total score of the email address. The lower the score the more likely the email address is suspicious or not valid. This is is an integer between 0 and 100. An example of a suspicous score would be 35, an example of a non-suspicous score would be 85.
+        - `suspicion_rating`: The rating of the email address. Valid value are HIGH, MEDIUM, LOW.
+      operationId: getBulkEmailAddressInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkEmailInfoRequest'
+        description: Request of the email addresses to get info about
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkEmailInfoResponse'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400ErrorResponse'
+          description: Invalid input
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorResponse'
+          description: Unauthorized
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/429ErrorResponse'
+          description: Reached request limit
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500ErrorResponse'
+          description: Internal server error
+      security:
+      - api_key: []
+      summary: Get information and legitimacy score for many email address
+      tags:
+      - email info
+      x-roles:
+      - user
+      - admin
+  /emails/csv:
+    post:
+      description: |-
+        **The provided file must have one email per line, currently CSV and plain text are the only supported file types**
+
+        Get information about many email address.
+
+        - `email`: The email address being validated. Example: `"user123@example.com"`.
+        - `user`: The user portion of the email address, which is everything before the "@" symbol. Example: `"user123"`.
+        - `domain`: The domain portion of the email address, which is everything after the "@" symbol. Example: `"example.com"`.
+        - `valid_email`: Indicates whether the email address format is valid. Example: `true`.
+        - `valid_spf`: Indicates whether the email domain has a valid SPF (Sender Policy Framework) record. Example: `true`.
+        - `valid_dmarc`: Indicates whether the email domain has a valid DMARC (Domain-based Message Authentication, Reporting & Conformance) record. Example: `true`.
+        - `valid_mx`: Indicates whether the email domain has valid MX (Mail Exchange) records. Example: `true`.
+        - `valid_tld`: If the TLD (Top Level Domain) specified in the email is valid. A TLD is .com, .org, .net, etc
+        - `nonsense`: Flags whether the email is nonsensical or randomly generated. Example: `false`.
+        - `role`: Indicates whether the email address is associated with a role (e.g., `admin@example.com`). Example: `false`.
+        - `free`: Indicates whether the email is from a free email provider (e.g., Gmail, Yahoo). Example: `true`.
+        - `disposable`: Indicates whether the email address is from a disposable email service. Example: `false`.
+        - `score`: The total score of the email address. The lower the score the more likely the email address is suspicious or not valid. This is is an integer between 0 and 100. An example of a suspicous score would be 35, an example of a non-suspicous score would be 85.
+        - `suspicion_rating`: The rating of the email address. Valid value are HIGH, MEDIUM, LOW.
+      operationId: getEmailCSV
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              format: csv
+              type: string
+        description: Request of the email addresses to get info about
+        required: true
+      responses:
+        "200":
+          content:
+            text/csv:
+              schema:
+                example: |-
+                  email,user,domain,valid_email,valid_spf,valid_dmarc,valid_mx,valid_tld,nonsense,role,free,disposable,score,suspicion_rating
+                  example1@example.com,example1,example.com,true,true,true,true,true,false,false,true,false,95,LOW
+                format: csv
+                type: string
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400ErrorResponse'
+          description: Invalid input
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorResponse'
+          description: Unauthorized
+        "429":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/429ErrorResponse'
+          description: Reached request limit
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500ErrorResponse'
+          description: Internal server error
+      security:
+      - api_key: []
+      summary: Get information and legitimacy score for many email addresses and return
+        via CSV
+      tags:
+      - email info
+      x-roles:
+      - user
+      - admin
+components:
+  schemas:
+    BulkEmailInfoRequest:
+      example:
+        data:
+        - example1@example.com
+        - example2@example.com
+      properties:
+        data:
+          items:
+            type: string
+          type: array
+      required:
+      - data
+      type: object
+    BulkEmailInfoResponse:
+      example:
+        data:
+        - role: false
+          valid_mx: true
+          disposable: false
+          suspicion_rating: LOW
+          nonsense: false
+          valid_tld: true
+          score: 65
+          domain: example.com
+          free: true
+          user: user123
+          email: user123@example.com
+          valid_dmarc: true
+          valid_email: true
+          valid_spf: true
+        - role: false
+          valid_mx: true
+          disposable: false
+          suspicion_rating: LOW
+          nonsense: false
+          valid_tld: true
+          score: 65
+          domain: example.com
+          free: true
+          user: user123
+          email: user123@example.com
+          valid_dmarc: true
+          valid_email: true
+          valid_spf: true
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/EmailInfoResponse'
+          type: array
+      required:
+      - data
+      type: object
+    EmailInfoResponse:
+      example:
+        role: false
+        valid_mx: true
+        disposable: false
+        suspicion_rating: LOW
+        nonsense: false
+        valid_tld: true
+        score: 65
+        domain: example.com
+        free: true
+        user: user123
+        email: user123@example.com
+        valid_dmarc: true
+        valid_email: true
+        valid_spf: true
+      properties:
+        email:
+          example: user123@example.com
+          type: string
+          x-order: 1
+        user:
+          example: user123
+          type: string
+          x-order: 2
+        domain:
+          example: example.com
+          type: string
+          x-order: 3
+        valid_email:
+          example: true
+          type: boolean
+          x-order: 4
+        valid_spf:
+          example: true
+          type: boolean
+          x-order: 5
+        valid_dmarc:
+          example: true
+          type: boolean
+          x-order: 6
+        valid_mx:
+          example: true
+          type: boolean
+          x-order: 7
+        valid_tld:
+          example: true
+          type: boolean
+          x-order: 8
+        nonsense:
+          example: false
+          type: boolean
+          x-order: 9
+        role:
+          example: false
+          type: boolean
+          x-order: 10
+        free:
+          example: true
+          type: boolean
+          x-order: 11
+        disposable:
+          example: false
+          type: boolean
+          x-order: 12
+        score:
+          example: 65
+          type: integer
+          x-order: 13
+        suspicion_rating:
+          example: LOW
+          type: string
+          x-order: 14
+      required:
+      - disposable
+      - domain
+      - email
+      - free
+      - nonsense
+      - role
+      - score
+      - suspicion_rating
+      - user
+      - valid_dmarc
+      - valid_email
+      - valid_mx
+      - valid_spf
+      - valid_tld
+      type: object
+    "400ErrorResponse":
+      example:
+        message: Invalid field or body
+      properties:
+        message:
+          example: Invalid field or body
+          type: string
+      required:
+      - message
+      type: object
+    "401ErrorResponse":
+      example:
+        message: unauthorized
+      properties:
+        message:
+          example: unauthorized
+          type: string
+      required:
+      - message
+      type: object
+    "404ErrorResponse":
+      properties:
+        message:
+          example: Resource cannot be found
+          type: string
+      required:
+      - message
+      type: object
+    "429ErrorResponse":
+      example:
+        message: ran out of credits
+      properties:
+        message:
+          example: ran out of credits
+          type: string
+      required:
+      - message
+      type: object
+    "500ErrorResponse":
+      example:
+        message: Internal server has occured
+      properties:
+        message:
+          example: Internal server has occured
+          type: string
+      required:
+      - message
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: Authorization
+      type: apiKey

@@ -1,0 +1,17 @@
+version: '3'
+
+dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
+
+tasks:
+  generate:
+    desc: generate database and handlers code
+    cmds:
+      - |
+        docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+          -i "$OPENAPI_SPEC" \
+          --additional-properties packageName=emaildetective \
+          -g go \
+          -o /local/emaildetective
+      - cp ./emaildetective/README.md ./README.md
+
+
