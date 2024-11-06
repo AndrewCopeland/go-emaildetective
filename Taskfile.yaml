@@ -12,6 +12,11 @@ tasks:
           --additional-properties packageName=emaildetective \
           -g go \
           -o /local
+      - rm git_push.sh
+      - sed -i '.bak' 's/GIT_USER_ID/AndrewCopeland/g' *
+      - sed -i '.bak' 's/GIT_REPO_ID/go-emaildetective/g' *
+      - sed -i '.bak' 's/openapiclient/emaildetective/g' *
+      # - sed -i 's/foo/bar/g' * this is for unix like systems
   push:
     desc: push a new version
     cmds:
