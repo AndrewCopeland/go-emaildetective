@@ -13,15 +13,15 @@ import (
 	"context"
 	"testing"
 
-	openapiclient "github.com/AndrewCopeland/go-emaildetective"
+	emaildetective "github.com/AndrewCopeland/go-emaildetective"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_emaildetective_EmailInfoAPIService(t *testing.T) {
 
-	configuration := openapiclient.NewConfiguration()
-	apiClient := openapiclient.NewAPIClient(configuration)
+	configuration := emaildetective.NewConfiguration()
+	apiClient := emaildetective.NewAPIClient(configuration)
 
 	t.Run("Test EmailInfoAPIService GetBulkEmailAddressInfo", func(t *testing.T) {
 

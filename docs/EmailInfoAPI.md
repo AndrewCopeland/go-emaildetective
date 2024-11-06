@@ -27,14 +27,14 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/GIT_USER_ID/GIT_REPO_ID"
+	emaildetective "github.com/AndrewCopeland/go-emaildetective"
 )
 
 func main() {
-	bulkEmailInfoRequest := *openapiclient.NewBulkEmailInfoRequest([]string{"Data_example"}) // BulkEmailInfoRequest | Request of the email addresses to get info about
+	bulkEmailInfoRequest := *emaildetective.NewBulkEmailInfoRequest([]string{"Data_example"}) // BulkEmailInfoRequest | Request of the email addresses to get info about
 
-	configuration := openapiclient.NewConfiguration()
-	apiClient := openapiclient.NewAPIClient(configuration)
+	configuration := emaildetective.NewConfiguration()
+	apiClient := emaildetective.NewAPIClient(configuration)
 	resp, r, err := apiClient.EmailInfoAPI.GetBulkEmailAddressInfo(context.Background()).BulkEmailInfoRequest(bulkEmailInfoRequest).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `EmailInfoAPI.GetBulkEmailAddressInfo``: %v\n", err)
@@ -93,14 +93,14 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/GIT_USER_ID/GIT_REPO_ID"
+	emaildetective "github.com/AndrewCopeland/go-emaildetective"
 )
 
 func main() {
 	emailAddress := "emailAddress_example" // string | email address
 
-	configuration := openapiclient.NewConfiguration()
-	apiClient := openapiclient.NewAPIClient(configuration)
+	configuration := emaildetective.NewConfiguration()
+	apiClient := emaildetective.NewAPIClient(configuration)
 	resp, r, err := apiClient.EmailInfoAPI.GetEmailAddressInfo(context.Background(), emailAddress).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `EmailInfoAPI.GetEmailAddressInfo``: %v\n", err)
@@ -163,14 +163,14 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/GIT_USER_ID/GIT_REPO_ID"
+	emaildetective "github.com/AndrewCopeland/go-emaildetective"
 )
 
 func main() {
 	body := "body_example" // string | Request of the email addresses to get info about
 
-	configuration := openapiclient.NewConfiguration()
-	apiClient := openapiclient.NewAPIClient(configuration)
+	configuration := emaildetective.NewConfiguration()
+	apiClient := emaildetective.NewAPIClient(configuration)
 	resp, r, err := apiClient.EmailInfoAPI.GetEmailCSV(context.Background()).Body(body).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `EmailInfoAPI.GetEmailCSV``: %v\n", err)

@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .travis.yml
 README.md
 api/openapi.yaml
@@ -27,5 +26,4 @@ model_bulk_email_info_request.go
 model_bulk_email_info_response.go
 model_email_info_response.go
 response.go
-test/api_email_info_test.go
 utils.go
